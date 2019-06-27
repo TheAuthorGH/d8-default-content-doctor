@@ -14,5 +14,7 @@
     "lodash": "^4.17.11"
   },
   "preferGlobal": true,
-  "bin": "./index.js"
+  "bin": {
+    "dcd": "./index.js"
+  }
 }
