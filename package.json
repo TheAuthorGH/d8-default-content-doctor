@@ -1,12 +1,9 @@
 {
   "name": "d8-default-content-doctor",
   "version": "1.0.0",
-  "description": "",
+  "description": "An utlity command line tool for debugging D8 default_content exports",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
+  "author": "Luis Lau",
   "license": "GPL-3.0",
   "dependencies": {
     "chalk": "^2.4.2",
