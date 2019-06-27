@@ -1,3 +1,5 @@
+const package = require('./package.json');
+
 const _ = require('lodash');
 const chalk = require('chalk');
 
@@ -8,14 +10,21 @@ module.exports = async () => {
 
   const cli = require('commander');
   cli
+    .version(package.version)
     .option('--folder [folder]', 'specify folder with default content', '.')
     .option('-d, --diagnose', 'print a list of problems found in default content', true)
     .option('-t, --tips', 'add manual repair tips when using diagnosis mode', false)
     .option('-r, --repair', 'sanitize and overwrite content config', false)
+    .option('-v, --version', 'display program version', false)
     .parse(process.argv);
-  
+
   console.log(chalk.cyan('* Loading default content...'));
-  const content = await loadDefaultContent(cli.folder);
+  let content;
+  try {
+    content = await loadDefaultContent(cli.folder);
+  } catch(e) {
+    console.log(chalk.red('* Error loading default content from specified directory.'));
+  }
 
   if(cli.diagnose) {
     console.log(chalk.cyan('* Diagnosing...\n'))

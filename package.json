@@ -1,5 +1,5 @@
 {
-  "name": "d8-default-content-doctor",
+  "name": "d8-dcd",
   "version": "1.0.0",
   "description": "An utlity command line tool for debugging D8 default_content exports",
   "main": "index.js",
