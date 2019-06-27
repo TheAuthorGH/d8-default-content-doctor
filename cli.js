@@ -8,9 +8,10 @@ module.exports = async () => {
 
   const cli = require('commander');
   cli
-    .option('-f, --folder [folder]', 'Specify folder with default content [current dir]', '.')
-    .option('-d, --diagnose', 'Prints diagnosis checks about default config.', true)
-    .option('-r, --repair', 'Sanitizes and overwrites content config')
+    .option('--folder [folder]', 'specify folder with default content', '.')
+    .option('-d, --diagnose', 'print a list of problems found in default content', true)
+    .option('-t, --tips', 'add manual repair tips when using diagnosis mode', false)
+    .option('-r, --repair', 'sanitize and overwrite content config', false)
     .parse(process.argv);
   
   console.log(chalk.cyan('* Loading default content...'));
@@ -22,8 +23,7 @@ module.exports = async () => {
 
     _.forEach(results, result => {
       console.log(chalk.yellow(` - ${result.diagnosis}`));
-      // TODO improve tip display.
-      if(result.diagnosisTip)
+      if(result.diagnosisTip && cli.tips)
         console.log(chalk.grey(` - Tip: ${result.diagnosisTip}`));
       if(result.diagnosisDetails)
         _.forEach(result.diagnosisDetails, detail => console.log(chalk.white(`   - ${detail}`)));
@@ -39,7 +39,7 @@ module.exports = async () => {
     const problemCount = noProblems ? chalk.green('0') : chalk.yellow(results.length);
     const duration = `${Date.now() - startTimestamp}ms`;
 
-    console.log(chalk.cyan(`* ${problemCount} problem(s) found in ${duration}.`));
+    console.log(chalk.cyan(`* ${problemCount} problem(s) found in ${duration}. Run with option --repair to attempt automatic repair.`));
     return;
   }
 

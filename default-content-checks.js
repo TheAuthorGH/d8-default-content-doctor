@@ -2,81 +2,50 @@ const _ = require('lodash');
 
 const util = require('./default-content-util');
 
+// *** REUSED CHECKS ***
+
+const checkMissingValues = (entities, valueKey) => (content) => {
+  const result = {};
+
+  entities = _.flatten([entities]);
+  const missingValues = util.getMissingValues(
+    _.map(entities, entity => _.get(content, entity)),
+    valueKey
+  );
+
+  if(!_.isEmpty(missingValues)) {
+    result.diagnosis = `Entities of type ${_.join(_.map(entities, e => `'${e}'`), ', ')} missing value '${valueKey}' (${missingValues.length})`;
+    result.diagnosisDetails = missingValues;
+  }
+
+  return result;
+};
+
+const checkDuplicateValues = (entities, valueKey) => (content) => {
+  const result = {};
+
+  entities = _.flatten([entities]);
+  const valueFreq = util.getValueFrequency(
+    _.map(entities, entity => _.get(content, entity)),
+    valueKey
+  );
+  const duplicates = _.keys(_.pickBy(valueFreq, freq => freq > 1));
+
+  if(!_.isEmpty(duplicates)) {
+    result.diagnosis = `Entities of type ${_.join(_.map(entities, e => `'${e}'`))} have duplicates of value '${valueKey}'`;
+    result.diagnosisDetails = duplicates;
+  }
+
+  return result;
+};
+
 module.exports = [
-  // *** NODES ***
+  checkMissingValues('node', 'uuid'),
+  checkMissingValues('node', 'nid'),
+  checkMissingValues('paragraph', 'revision_id'),
+  checkMissingValues('block_content', 'revision_id'),
 
-  // * Missing NIDs *
-  (content) => {
-    const result = {};
-
-    const missingNid = util.getMissingValues(content.node, 'nid');
-    if(!_.isEmpty(missingNid)) {
-      result.diagnosis = `Nodes missing nid (${missingNid.length})`;
-      result.diagnosisDetails = missingNid;
-    }
-
-    return result;
-  },
-
-  // * Duplicate NIDs *
-  (content) => {
-    const result = {};
-
-    const nidFreq = util.getValueFrequency(content.node, 'nid');
-    const duplicates = _.keys(_.pickBy(nidFreq, freq => freq > 1));
-
-    if(!_.isEmpty(duplicates)) {
-      result.diagnosis = `Nodes with duplicate nids (${duplicates.length})`;
-      result.diagnosisDetails = duplicates;
-    }
-
-    return result;
-  },
-
-  // * Duplicate VIDs *
-  (content) => {
-    const result = {};
-
-    const vidFreq = util.getValueFrequency(content.node, 'vid');
-    const duplicates = _.keys(_.pickBy(vidFreq, freq => freq > 1));
-
-    if(!_.isEmpty(duplicates)) {
-      result.diagnosis = `Nodes with duplicate vids (${duplicates.length})`;
-      result.diagnosisDetails = duplicates;
-    }
-
-    return result;
-  },
-
-  // *** REVISIONS ***
-
-  // * Missing Revision IDs *
-  (content) => {
-    const result = {};
-
-    const missingRevisionId = util.getMissingValues([content.paragraph, content.block_content], 'revision_id');
-
-    if(!_.isEmpty(missingRevisionId)) {
-      result.diagnosis = `Content missing revision_id (${missingRevisionId.length})`;
-      result.diagnosisDetails = missingRevisionId;
-      result.diagnosisTip = `Next unused revision_id is ${util.getMaxValue([content.paragraph, content.block_content], 'revision_id') + 1}`;
-    }
-
-    return result;
-  },
-
-  // * Duplicate revision IDs *
-  (content) => {
-    const result = {};
-
-    const revisionIdFreq = util.getValueFrequency([content.paragraph, content.block_content], 'revision_id');
-    const duplicates = _.keys(_.pickBy(revisionIdFreq, freq => freq > 1));
-
-    if(!_.isEmpty(duplicates)) {
-      result.diagnosis = `Content with duplicate revision_ids (${duplicates.length})`;
-      result.diagnosisDetails = duplicates;
-    }
-
-    return result;
-  },
+  checkDuplicateValues('node', 'nid'),
+  checkDuplicateValues('node', 'vid'),
+  checkDuplicateValues(['paragraph', 'block_content'], 'revision_id')
 ];
