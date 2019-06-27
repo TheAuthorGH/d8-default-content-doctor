@@ -42,10 +42,13 @@ const checkDuplicateValues = (entities, valueKey) => (content) => {
 module.exports = [
   checkMissingValues('node', 'uuid'),
   checkMissingValues('node', 'nid'),
+  checkMissingValues('paragraph', 'id'),
+  checkMissingValues('block_content', 'id'),
   checkMissingValues('paragraph', 'revision_id'),
   checkMissingValues('block_content', 'revision_id'),
 
   checkDuplicateValues('node', 'nid'),
   checkDuplicateValues('node', 'vid'),
-  checkDuplicateValues(['paragraph', 'block_content'], 'revision_id')
+  checkDuplicateValues(['paragraph', 'block_content'], 'revision_id'),
+  checkDuplicateValues(['paragraph', 'block_content'], 'id')
 ];
