@@ -6,12 +6,13 @@ const sources = ['node', 'block_content', 'paragraph', 'file'];
 const loadDefaultContent = async (dir) => {
   const content = _.zipObject(
     sources,
-    _.map(sources, source => {
-      return _.map(
-        fs.readdirSync(`${dir}/${source}`),
-        file => JSON.parse(fs.readFileSync(`${dir}/${source}/${file}`))
-      );
-    })
+    _.map(sources, source =>
+      _.chain(source => fs.readdirSync(`${dir}/${source}`))
+        .filter(file => _.endsWith(file, '.json'))
+        .map(file => fs.readFileSync(`${dir}/${source}/${file}`))
+        .map(JSON.parse)
+        .value()
+    )
   );
   return content;
 };
