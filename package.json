@@ -1,6 +1,6 @@
 {
   "name": "d8-dcd",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "An utlity command line tool for debugging D8 default_content exports",
   "main": "index.js",
   "author": "Luis Lau",

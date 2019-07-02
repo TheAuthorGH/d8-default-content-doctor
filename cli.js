@@ -24,6 +24,7 @@ module.exports = async () => {
     content = await loadDefaultContent(cli.folder);
   } catch(e) {
     console.log(chalk.red('* Error loading default content from specified directory.'));
+    return;
   }
 
   if(cli.diagnose) {
