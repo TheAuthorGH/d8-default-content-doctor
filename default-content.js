@@ -7,7 +7,7 @@ const loadDefaultContent = async (dir) => {
   const content = _.zipObject(
     sources,
     _.map(sources, source =>
-      _.chain(source => fs.readdirSync(`${dir}/${source}`))
+      _.chain(fs.readdirSync(`${dir}/${source}`))
         .filter(file => _.endsWith(file, '.json'))
         .map(file => fs.readFileSync(`${dir}/${source}/${file}`))
         .map(JSON.parse)
